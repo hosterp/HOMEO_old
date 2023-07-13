@@ -69,7 +69,7 @@ class ResPartner(models.Model):
     #             rec.b2c = True
     #             rec.b2b = False
 
-    local_customer = fields.Boolean(default=True)
+    local_customer = fields.Boolean()
     interstate_customer = fields.Boolean()
     b2b = fields.Boolean()
     # b2b = fields.Boolean(compute="_change_boolean_status")
@@ -79,6 +79,14 @@ class ResPartner(models.Model):
     address_new = fields.Text('Address')
     res_person_id = fields.Boolean('Sale Responsible Person ?')
 
+    @api.onchange('gst_no')
+    def b2c_field(self):
+        if self.gst_no:
+            self.b2b = True
+            self.b2c = False
+        else:
+            self.b2c = True
+            self.b2b = False
     @api.multi
     def open_tree_view(self, context=None):
         field_ids = self.env['account.invoice'].search([('res_person', '=', self.id),('packing_slip','=',False),('holding_invoice','=',False)]).ids
