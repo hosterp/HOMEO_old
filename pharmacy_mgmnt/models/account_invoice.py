@@ -1,4 +1,4 @@
-import dateutil.utils
+# import dateutil.utils
 
 from openerp import api, models, fields
 from openerp.osv import osv
