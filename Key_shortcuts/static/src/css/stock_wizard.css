@@ -1,0 +1,28 @@
+.dataTables_wrapper {}
+
+.dataTables_wrapper .dataTables_length {
+    display: none;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: left;
+}
+
+
+
+
+
+
+.oe_form_container > .oe_form .oe_form_nosheet > h1 {
+    max-height: 30px;
+}
+.oe_form_container > .oe_form .oe_form_nosheet > h1 > label.oe_form_label {
+    font-size: 17px;
+}
+textarea.field_text[name="address_new"] {
+    max-height: 40px;
+}
+
+text.input[type="text"]{
+max-width: 182px
+}
