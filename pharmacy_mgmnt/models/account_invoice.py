@@ -1339,15 +1339,20 @@ class AccountInvoice(models.Model):
     @api.multi
     def import_to_invoice(self):
         for record in self:
-
-            # if record.state == 'packing_slip':
-            #     record.state = 'open'
-            # else:
             record.state = 'draft'
             record.packing_slip = False
             record.holding_invoice = False
-            record.number2 = self.env['ir.sequence'].next_by_code('customer.account.invoice')
-        return
+            record.cus_invoice = True
+            record.number2 = self.env['ir.sequence'].next_by_code('packing.slip.invoice')
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        invoice_id = self.id
+        redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
+            base_url, invoice_id)
+        return {
+            'type': 'ir.actions.act_url',
+            'url': redirect_url,
+            'target': 'self',
+        }
 
     @api.multi
     def invoice_open(self):
