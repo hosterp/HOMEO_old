@@ -39,12 +39,10 @@ class CustomerInvoiceHistoryTree(models.TransientModel):
             'domain':[('id', 'in', res.ids)],
             'type': 'ir.actions.act_window',
             'target': 'current',
-
-
         }
     @api.multi
     def action_packing_slip_window(self):
-        domain = [('packing_slip','=',True)]
+        domain = [('packing_invoice', '=', True)]
         if self.invoices_id:
             domain += [('id', '=', self.invoices_id.id)]
             res = self.env['account.invoice'].search(domain)

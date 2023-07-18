@@ -18,7 +18,7 @@
 					<separator string="OR"/>
 					<group>
 						<group col="6">
-							<field name="invoices_id" string="Packing Slip NO" domain="[('packing_slip','=',True)]"/>
+							<field name="invoices_id" string="Packing Slip NO" domain="[('packing_invoice','=',True)]"/>
 						</group>
 					</group>
 					<footer>
