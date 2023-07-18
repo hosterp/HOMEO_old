@@ -1340,10 +1340,16 @@ class AccountInvoice(models.Model):
     def import_to_invoice(self):
         for record in self:
             record.state = 'draft'
+            res = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
+            print("split before", res.number2)
+            last_index = int(res.number2.split('/')[1]) + 1
+            record.number2 = res.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+            record.seq = res.seq + 1
+            print(record.number2,'if')
             record.packing_slip = False
             record.holding_invoice = False
             record.cus_invoice = True
-            record.number2 = self.env['ir.sequence'].next_by_code('packing.slip.invoice')
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         invoice_id = self.id
         redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
@@ -1408,46 +1414,57 @@ class AccountInvoice(models.Model):
         invoice_type = self.env.context.get('default_type') or self._context.get('default_type')
         packing_slip = self.env.context.get('default_packing_invoice') or self._context.get('default_packing_invoice')
         holding_invoice = self.env.context.get('default_hold_invoice') or self._context.get('default_hold_invoice')
-        # print("pack",packing_slip)
-        # print("hold",holding_invoice)
+        cus_invoice = self.env.context.get('default_cus_invoice') or self._context.get('default_cus_invoice')
 
         if invoice_type == 'in_invoice':
-            res = self.env['account.invoice'].search([('type', '=', 'in_invoice')], limit=1)
+            res4 = self.env['account.invoice'].search([('type', '=', 'in_invoice')], limit=1)
             number = self.env['ir.sequence'].get('supplier.account.invoice')
-        if invoice_type == 'out_invoice':
-            res = self.env['account.invoice'].search(
-                [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
-            number = self.env['ir.sequence'].get('customer.account.invoice')
-            # print("number........................",number)
-            # print("number2........................",res.number2)
-        if packing_slip == True:
-            res = self.env['account.invoice'].search(
-                [('type', '=', 'out_invoice'), ('packing_invoice', '=', True)], limit=1)
-            number = self.env['ir.sequence'].get('packing.slip.invoice')
-            # print("res packing", res)
-        if holding_invoice == True:
-            # print("packing invoice", )
-            # print("packing", packing_slip)
-            # print("holding", holding_invoice)
-            res = self.env['account.invoice'].search(
-                [('type', '=', 'out_invoice'), ('hold_invoice', '=', True), ('packing_invoice', '=', False)], limit=1)
-            # print("res holding", res)
-            number = self.env['ir.sequence'].get('holding.invoice')
-        if not res:
             vals['number2'] = number
             vals['seq'] = 1
-        # else:
-        #     if res.number2 == False:
-        #         print("number",number)
-        #         vals['number2'] = number
-        #         vals['seq'] = 1
-        else:
-            print("split before", res.number2)
-            last_index = int(res.number2.split('/')[1]) + 1
-            # index = number.split('/')
-            # vals['number2'] = index[0] + "/" + index[1] + "/" + str(last_index)
-            vals['number2'] = res.number2.split('/')[0] + "/" + str(last_index).zfill(4)
-            vals['seq'] = res.seq + 1
+            if res4:
+                last_index = int(res4.number2.split('/')[1]) + 1
+                vals['number2'] = res4.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['seq'] = res4.seq + 1
+            else:
+                pass
+        if invoice_type == 'out_invoice' and cus_invoice == True:
+            res1 = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
+            number = self.env['ir.sequence'].get('customer.account.invoice')
+            vals['number2'] = number
+            vals['seq'] = 1
+            if res1:
+                last_index = int(res1.number2.split('/')[1]) + 1
+                # index = number.split('/')
+                # vals['number2'] = index[0] + "/" + index[1] + "/" + str(last_index)
+                vals['number2'] = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['seq'] = res1.seq + 1
+            else:
+                pass
+        if packing_slip == True and invoice_type == 'out_invoice':
+            res2 = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('packing_invoice', '=', True)], limit=1)
+            number = self.env['ir.sequence'].get('packing.slip.invoice')
+            vals['number2'] = number
+            vals['seq'] = 1
+            if res2:
+                last_index = int(res2.number2.split('/')[1]) + 1
+                vals['number2'] = res2.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['seq'] = res2.seq + 1
+            else:
+                pass
+        if holding_invoice == True and invoice_type == 'out_invoice':
+            res3 = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('hold_invoice', '=', True), ('packing_invoice', '=', False)], limit=1)
+            number = self.env['ir.sequence'].get('holding.invoice')
+            vals['number2'] = number
+            vals['seq'] = 1
+            if res3:
+                last_index = int(res3.number2.split('/')[1]) + 1
+                vals['number2'] = res3.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['seq'] = res3.seq + 1
+            else:
+                pass
         result = super(AccountInvoice, self).create(vals)
         return result
     #     # ................. OLD CODE..............
