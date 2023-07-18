@@ -1342,13 +1342,11 @@ class AccountInvoice(models.Model):
             record.state = 'draft'
             res = self.env['account.invoice'].search(
                 [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
-            print("split before", res.number2)
             last_index = int(res.number2.split('/')[1]) + 1
             record.number2 = res.number2.split('/')[0] + "/" + str(last_index).zfill(4)
             record.seq = res.seq + 1
-            print(record.number2,'if')
-            record.packing_slip = False
-            record.holding_invoice = False
+            record.packing_invoice = False
+            record.hold_invoice = False
             record.cus_invoice = True
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         invoice_id = self.id
@@ -1401,7 +1399,6 @@ class AccountInvoice(models.Model):
                             credit_amount) + '  has been Crossed.' + "\n" 'Check  ' + rec.partner_id.name + 's' + ' Credit Limits'))
 
                     if (rec.partner_id.credit_end_date < self.date_invoice):
-                        print("Exceed date")
                         raise except_orm(_('CREDIT DAYS LIMIT REACHED!'), (
                                     'This Customers Credit Limit Days Are Ended' + "\n" 'Please Update the Customer Form'))
 
@@ -1409,7 +1406,6 @@ class AccountInvoice(models.Model):
     # MY CODE........................................
     @api.model
     def create(self, vals):
-
         # previous_invoice_number = self.env['account.invoice'].search([], order='seq desc', limit=1).number2.split('/')
         invoice_type = self.env.context.get('default_type') or self._context.get('default_type')
         packing_slip = self.env.context.get('default_packing_invoice') or self._context.get('default_packing_invoice')
@@ -1435,15 +1431,13 @@ class AccountInvoice(models.Model):
             vals['seq'] = 1
             if res1:
                 last_index = int(res1.number2.split('/')[1]) + 1
-                # index = number.split('/')
-                # vals['number2'] = index[0] + "/" + index[1] + "/" + str(last_index)
                 vals['number2'] = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
                 vals['seq'] = res1.seq + 1
             else:
                 pass
         if packing_slip == True and invoice_type == 'out_invoice':
             res2 = self.env['account.invoice'].search(
-                [('type', '=', 'out_invoice'), ('packing_invoice', '=', True)], limit=1)
+                [('type', '=', 'out_invoice'), ('packing_invoice', '=', True), ('hold_invoice', '=', False),], limit=1)
             number = self.env['ir.sequence'].get('packing.slip.invoice')
             vals['number2'] = number
             vals['seq'] = 1
