@@ -37,9 +37,8 @@ class AccountInvoiceLine(models.Model):
 
     @api.model
     def create(self, vals):
-
         result = super(AccountInvoiceLine, self).create(vals)
-        if result.invoice_id.type == 'in_invoice':
+        if result.invoice_id.type == 'in_invoice' and result.quantity != 0 :
             vals = {
                 'expiry_date': result.expiry_date,
                 'manf_date': result.manf_date,
@@ -1693,6 +1692,8 @@ class AccountInvoice(models.Model):
     @api.multi
     def tree_stock(self):
         print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
+        rec = self.env['entry.stock'].sudo.search([])
+        print(rec, "alldataaaa222")
         return {
             'name': 'stock tree',
             'view_type': 'form',
@@ -1705,6 +1706,8 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def wiz_tree(self):
+        rec = self.env['entry.stock'].sudo.search([])
+        print(rec,"alldataaaa11")
         return {
             'context': self.env.context,
             'view_type': 'form',
