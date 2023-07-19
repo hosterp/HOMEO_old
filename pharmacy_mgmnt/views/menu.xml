@@ -630,7 +630,7 @@
                         <group>
                              <field name="name"/>
                              <field name="cheque_amount"/>
-                             <field name="balance" readonly="1"/>
+                             <field name="balance" readonly="1" invisible="1"/>
 
 
                         </group>
