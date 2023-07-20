@@ -295,31 +295,61 @@ class NewStockEntry(models.Model):
         result = super(NewStockEntry, self).create(vals)
         return result
 
-    @api.multi
-    def call_function(self):
-        # print("Active id",self.env.context.get('active_id'))
-        cus_invoice = self.env['account.invoice'].browse(self.env.context.get('active_id'))
-        if cus_invoice:
-            new_lines = []
-            for rec in self:
-                new_lines.append((0, 0, {
-                    'name': rec.medicine_1.name,
-                    'product_id': rec.medicine_1.id,
-                    'medicine_name_subcat': rec.potency.id,
-                    'medicine_name_packing': rec.medicine_name_packing.id,
-                    'product_of': rec.company.id,
-                    'medicine_grp': rec.medicine_grp1.id,
-                    'batch_2': rec.batch_2.id,
-                    'hsn_code': rec.hsn_code,
-                    'price_unit': rec.mrp,
-                    'discount': cus_invoice.discount_rate or 0,
-                    'manf_date': rec.manf_date,
-                    'expiry_date': rec.expiry_date,
-                    'medicine_rack': rec.rack.id,
-                    'invoice_line_tax_id4': rec.invoice_line_tax_id4,
-                    'rack_qty': rec.qty,
+    @api.onchange('quantity_selected')
+    def quantity_selected_onchage(self):
+        if self.quantity_selected != 0:
+            cus_invoice = self.env['account.invoice'].browse(self.env.context.get('active_id'))
+            if cus_invoice:
+                new_lines = []
+                for rec in self:
+                    new_lines.append((0, 0, {
+                        'name': rec.medicine_1.name,
+                        'product_id': rec.medicine_1.id,
+                        'medicine_name_subcat': rec.potency.id,
+                        'medicine_name_packing': rec.medicine_name_packing.id,
+                        'product_of': rec.company.id,
+                        'medicine_grp': rec.medicine_grp1.id,
+                        'batch_2': rec.batch_2.id,
+                        'hsn_code': rec.hsn_code,
+                        'price_unit': rec.mrp,
+                        'discount': cus_invoice.discount_rate or 0,
+                        'manf_date': rec.manf_date,
+                        'expiry_date': rec.expiry_date,
+                        'medicine_rack': rec.rack.id,
+                        'invoice_line_tax_id4': rec.invoice_line_tax_id4,
+                        'rack_qty': rec.qty,
+                        'quantity':rec.quantity_selected,
 
-                }))
-            cus_invoice.write({'invoice_line': new_lines})
-        else:
-            pass
+                    }))
+                cus_invoice.write({'invoice_line': new_lines})
+            else:
+                pass
+        # self.quantity_selected=0
+    # @api.multi
+    # def call_function(self):
+    #     # print("Active id",self.env.context.get('active_id'))
+    #     cus_invoice = self.env['account.invoice'].browse(self.env.context.get('active_id'))
+    #     if cus_invoice:
+    #         new_lines = []
+    #         for rec in self:
+    #             new_lines.append((0, 0, {
+    #                 'name': rec.medicine_1.name,
+    #                 'product_id': rec.medicine_1.id,
+    #                 'medicine_name_subcat': rec.potency.id,
+    #                 'medicine_name_packing': rec.medicine_name_packing.id,
+    #                 'product_of': rec.company.id,
+    #                 'medicine_grp': rec.medicine_grp1.id,
+    #                 'batch_2': rec.batch_2.id,
+    #                 'hsn_code': rec.hsn_code,
+    #                 'price_unit': rec.mrp,
+    #                 'discount': cus_invoice.discount_rate or 0,
+    #                 'manf_date': rec.manf_date,
+    #                 'expiry_date': rec.expiry_date,
+    #                 'medicine_rack': rec.rack.id,
+    #                 'invoice_line_tax_id4': rec.invoice_line_tax_id4,
+    #                 'rack_qty': rec.qty,
+    #
+    #             }))
+    #         cus_invoice.write({'invoice_line': new_lines})
+    #     else:
+    #         pass
