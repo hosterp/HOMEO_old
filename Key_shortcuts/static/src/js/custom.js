@@ -162,6 +162,16 @@ $.shortcut('39', function() {
     $('html').addClass(newClass);
     // For adding tr to supplier table
 
+//VINCODES
+
+  $(document).on('keyup', '.dataTables_filter input[type="search"]', function (event) {
+    if (event.keyCode === 13) {
+     var quantityField = $('[id^="DataTables_Table_"] tbody tr:first-child td[data-field="quantity_selected"]');
+     quantityField.click();
+
+    }
+  });
+
 
 
 
