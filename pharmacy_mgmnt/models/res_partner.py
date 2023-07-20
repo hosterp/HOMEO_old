@@ -23,12 +23,12 @@ class ResPartner(models.Model):
     cus_title = fields.Many2one('customer.title', "Customer Type")
     cust_area = fields.Many2one('customer.area', "Customer Area")
 
-    @api.constrains('name')
-    def _check_name_product(self):
-        for record in self:
-            old_record = self.search([('name', '=', record.name)])
-            if len(old_record.ids) > 1:
-                raise models.ValidationError('Record Already existing with same name')
+    # @api.constrains('name')
+    # def _check_name_product(self):
+    #     for record in self:
+    #         old_record = self.search([('name', '=', record.name)])
+    #         if len(old_record.ids) > 1:
+    #             raise models.ValidationError('Record Already existing with same name')
 
 
     # _sql_constraints = [
