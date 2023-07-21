@@ -70,6 +70,12 @@ $.shortcut('16', function() {
 		}
 	});
 });
+//$.shortcut('13', function() {
+//	if($(document).on('keyup', '[id^="DataTables_Table_"] tbody tr:first-child td[data-field="quantity_selected"]'{
+//		$('.close)'.trigger('click');
+//		}
+//	}):
+//});
 
 //$.shortcut('16', function() {
 //	$('.oe_required').odd().each(function() {
@@ -168,9 +174,14 @@ $.shortcut('39', function() {
     if (event.keyCode === 13) {
      var quantityField = $('[id^="DataTables_Table_"] tbody tr:first-child td[data-field="quantity_selected"]');
      quantityField.click();
-
     }
   });
+ $(document).on('keyup', '.css_hiworth', function (event) {
+    if (event.keyCode === 13) {
+        $('.oe_form_field_one2many_list_row_add a').trigger('click');
+    }
+  });
+
 
 
 
