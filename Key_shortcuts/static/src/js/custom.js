@@ -70,12 +70,6 @@ $.shortcut('16', function() {
 		}
 	});
 });
-//$.shortcut('13', function() {
-//	if($(document).on('keyup', '[id^="DataTables_Table_"] tbody tr:first-child td[data-field="quantity_selected"]'{
-//		$('.close)'.trigger('click');
-//		}
-//	}):
-//});
 
 //$.shortcut('16', function() {
 //	$('.oe_required').odd().each(function() {
@@ -105,13 +99,7 @@ $.shortcut('121', function() {
 		}
 	});
 });
-$.shortcut('39', function() {
-    $('.oe_form_field_one2many_list_row_add a').each(function() {
-        if ($(this).parents('div:hidden').length==0) {
-            $(this).trigger('click');
-        }
-    });
-});
+
 //--VIN
 //$(document).on('keydown', '#oe-field-input-14', function(e) {
 //if (event.keyCode === 39) { // Right arrow key code is 39
@@ -145,7 +133,7 @@ $.shortcut('39', function() {
 
 
 //console.log('f3');
-
+     quantity=$('[id^="DataTables_Table_"] tbody td[data-field="quantity_selected"]')
 //    ROBIN'S CODE
     $( document ).ready(function() {
 
@@ -174,15 +162,37 @@ $.shortcut('39', function() {
     if (event.keyCode === 13) {
      var quantityField = $('[id^="DataTables_Table_"] tbody tr:first-child td[data-field="quantity_selected"]');
      quantityField.click();
-    }
+     }
+     let lastKeyPressTime = 0;
+    const doubleClickInterval = 500; // Time interval to consider as a double click (in milliseconds)
+
+    quantity = $('[id^="DataTables_Table_"] tbody td[data-field="quantity_selected"]');
+    $(document).on('keyup', quantity, function (event) {
+        if (event.keyCode === 13) {
+            const currentKeyPressTime = new Date().getTime();
+            const timeSinceLastKeyPress = currentKeyPressTime - lastKeyPressTime;
+            lastKeyPressTime = currentKeyPressTime;
+
+            if (timeSinceLastKeyPress < doubleClickInterval) {
+                // Double click detected
+                $('.close').click();
+            }
+        }
+});
+
+//     quantity=$('[id^="DataTables_Table_"] tbody td[data-field="quantity_selected"]')
+//     $(document).on('keyup',quantity,function (event) {
+//        if (event.keyCode.dbclick()=== 13) {
+//            $('.close').click();
+//        }
+//     });
   });
+
  $(document).on('keyup', '.css_hiworth', function (event) {
     if (event.keyCode === 13) {
         $('.oe_form_field_one2many_list_row_add a').trigger('click');
     }
   });
-
-
 
 
 
